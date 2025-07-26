@@ -1,103 +1,164 @@
-import Image from "next/image";
+'use client'
+
+import Image from 'next/image'
+import Link from 'next/link'
+import { useState } from 'react'
 
 export default function Home() {
-  return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [flipped, setFlipped] = useState(false)
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  return (
+    <div className="w-full max-w-8xl mx-auto py-12 items-center">
+      <div className="flex flex-col md:flex-row gap-12 justify-center items-center px-4">
+
+        {/* Branding / Left Column */}
+        <div className="w-full md:w-3/5 max-w-2xl">
+          <div className="bg-[var(--brand-darker)] text-center text-brand-light p-8 md:p-12 rounded-xl">
+            <div className="flex justify-center mb-6">
+              <Image
+                src="/logo.png"
+                alt="Uzero Logo"
+                width={96}
+                height={96}
+                className="w-20 h-20 md:w-24 md:h-24"
+              />
+            </div>
+            <h1 className="text-3xl md:text-4xl font-bold mb-4" style={{ fontFamily: 'var(--font-cinzel)' }}>
+              UZERO <br />COMPANION
+            </h1>
+            <div className="px-4">
+              <p className="text-sm text-[var(--brand-gold)] font-serif italic leading-relaxed space-y-2">
+                <span>Di dunia yang pernah diberkati lalu dikutuk,</span><br />
+                <span>warisan tidak hanya berupa darah, tapi juga dosa.</span><br />
+                <span>Kisah ini tertulis bukan dalam tinta,</span><br />
+                <span>melainkan dalam tekad dan kehilangan.</span><br /><br />
+                <span>Selamat datang di Uzero.</span><br />
+                <span>Di sinilah warisan terakhir dibisikkan dari reruntuhan,</span><br />
+                <span>dan dosa pertama menolak dilupakan.</span>
+              </p>
+            </div>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+
+        <div className="w-full md:w-2/5 max-w-md perspective items-center">
+          <div className={`relative w-full h-[480px] transition-transform duration-700 [transform-style:preserve-3d] ${flipped ? '[transform:rotateY(180deg)]' : ''}`}>
+
+            {/* LOGIN SIDE */}
+            <div className="absolute inset-0 backface-hidden bg-[var(--brand-dark)] rounded-xl shadow-lg text-brand-light p-8 flex flex-col justify-between">
+              <div>
+                <h2 className="text-3xl md:text-4xl font-bold text-center mb-6 font-cinzel tracking-wide">MASUK KE UZERO</h2>
+                <form className="space-y-4">
+                  <div>
+                    <label htmlFor="email" className="block mb-1 font-medium">Email</label>
+                    <input
+                      id="email"
+                      type="email"
+                      placeholder="you@example.com"
+                      className="w-full px-4 py-2 rounded bg-[var(--brand-light)] text-black focus:outline-none focus:ring-2 focus:ring-[var(--brand-gold)]"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="password" className="block mb-1 font-medium">Kata Sandi</label>
+                    <input
+                      id="password"
+                      type="password"
+                      placeholder="••••••••"
+                      className="w-full px-4 py-2 rounded bg-[var(--brand-light)] text-black focus:outline-none focus:ring-2 focus:ring-[var(--brand-gold)]"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    className="w-full mt-4 py-2 rounded bg-[var(--brand-gold)] text-black font-bold hover:bg-yellow-600 transition-colors duration-200"
+                  >
+                    Masuk
+                  </button>
+                </form>
+              </div>
+              <p className="text-sm text-center">
+                Belum punya akun?{' '}
+                <button
+                  type="button"
+                  onClick={() => setFlipped(true)}
+                  className="text-[var(--brand-gold)] hover:underline font-medium"
+                >
+                  Daftar sekarang
+                </button>
+              </p>
+            </div>
+
+            {/* REGISTER SIDE */}
+            <div className="absolute inset-0 backface-hidden rotateY-180 bg-[var(--brand-dark)] rounded-xl shadow-lg text-brand-light p-8 flex flex-col justify-between">
+              <div>
+                <h2 className="text-3xl md:text-4xl font-bold text-center mb-6 font-cinzel tracking-wide">Daftar Akun Baru</h2>
+                <form className="space-y-4">
+                  <div>
+                    <label htmlFor="username" className="block mb-1 font-medium">Nama Pengguna</label>
+                    <input
+                      id="username"
+                      type="text"
+                      placeholder="pilih nama unik"
+                      className="w-full px-4 py-2 rounded bg-[var(--brand-light)] text-black focus:outline-none focus:ring-2 focus:ring-[var(--brand-gold)]"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="email-reg" className="block mb-1 font-medium">Email</label>
+                    <input
+                      id="email-reg"
+                      type="email"
+                      placeholder="email@contoh.com"
+                      className="w-full px-4 py-2 rounded bg-[var(--brand-light)] text-black focus:outline-none focus:ring-2 focus:ring-[var(--brand-gold)]"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="password-reg" className="block mb-1 font-medium">Kata Sandi</label>
+                      <input
+                        id="password-reg"
+                        type="password"
+                        placeholder="••••••••"
+                        className="w-full px-4 py-2 rounded bg-[var(--brand-light)] text-black focus:outline-none focus:ring-2 focus:ring-[var(--brand-gold)]"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="confirmPassword" className="block mb-1 font-medium">Konfirmasi Sandi</label>
+                      <input
+                        id="confirmPassword"
+                        type="password"
+                        placeholder="••••••••"
+                        className="w-full px-4 py-2 rounded bg-[var(--brand-light)] text-black focus:outline-none focus:ring-2 focus:ring-[var(--brand-gold)]"
+                      />
+                    </div>
+                  </div>
+                  <label className="flex items-start space-x-2 text-sm pt-2">
+                    <input type="checkbox" required className="mt-1 rounded bg-[var(--brand-light)] text-[var(--brand-gold)]" />
+                    <span>
+                      Saya menyetujui <Link href="/terms" className="text-[var(--brand-gold)] hover:underline">Syarat & Ketentuan</Link> dan <Link href="/privacy" className="text-[var(--brand-gold)] hover:underline">Kebijakan Privasi</Link>
+                    </span>
+                  </label>
+                  <button
+                    type="submit"
+                    className="w-full mt-4 py-2 rounded bg-[var(--brand-gold)] text-black font-bold hover:bg-yellow-600 transition-colors"
+                  >
+                    Mulai Petualangan
+                  </button>
+                </form>
+              </div>
+              <p className="text-sm text-center">
+                Sudah punya akun?{' '}
+                <button
+                  type="button"
+                  onClick={() => setFlipped(false)}
+                  className="text-[var(--brand-gold)] hover:underline font-medium"
+                >
+                  Masuk disini
+                </button>
+              </p>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
     </div>
-  );
+  )
 }
