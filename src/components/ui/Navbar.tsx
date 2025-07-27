@@ -1,18 +1,17 @@
-// 📄 src/components/Navbar.tsx → Komponen navigasi utama di bagian atas halaman
+'use client'
 
-'use client' // Client Component karena menggunakan hook React
-
-import { useState } from 'react' // Untuk toggle menu mobile
-import Image from 'next/image' // Untuk menampilkan logo
-import Link from 'next/link' // Navigasi antar halaman
-import { usePathname } from 'next/navigation' // Mendapatkan path aktif saat ini
-import { Menu, X } from 'lucide-react' // Ikon menu (hamburger dan close)
+import { useState } from 'react'
+import Image from 'next/image'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
+import { signOut, useSession } from 'next-auth/react'
+import { Menu, X } from 'lucide-react'
 
 export default function Navbar() {
-  const pathname = usePathname() // Path URL aktif
-  const [isOpen, setIsOpen] = useState(false) // Status menu mobile
+  const pathname = usePathname()
+  const [isOpen, setIsOpen] = useState(false)
+  const { data: session } = useSession()
 
-  // Daftar menu navigasi
   const navItems = [
     { name: 'Home', href: '/home' },
     { name: 'Books', href: '/home/books' },
@@ -23,7 +22,6 @@ export default function Navbar() {
     { name: 'Locations', href: '/home/locations' },
   ]
 
-  // Penanda menu aktif
   const isActive = (href: string) => {
     if (href === '/home') return pathname === '/home'
     return pathname.startsWith(href)
@@ -32,13 +30,13 @@ export default function Navbar() {
   return (
     <nav className="sticky top-0 z-50 border-b border-[var(--brand-dark)] bg-[var(--background)] text-[var(--brand-accent)] backdrop-blur-md bg-opacity-90">
       <div className="mx-auto px-12 py-4 flex items-center justify-between">
-        {/* Logo dan judul */}
+        {/* Logo */}
         <Link href="/home" className="flex items-center space-x-2">
           <Image src="/logo.png" alt="Uzero Logo" width={20} height={20} />
           <span className="text-lg font-semibold tracking-wide font-cinzel">UZERO COMPANION</span>
         </Link>
 
-        {/* Tombol hamburger untuk mobile */}
+        {/* Mobile menu toggle */}
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="md:hidden text-[var(--brand-accent)]"
@@ -47,7 +45,7 @@ export default function Navbar() {
           {isOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
 
-        {/* Navigasi horizontal untuk desktop */}
+        {/* Desktop nav */}
         <div className="hidden md:flex items-center space-x-4 text-sm font-semibold">
           {navItems.map(({ name, href }) => (
             <Link
@@ -60,26 +58,49 @@ export default function Navbar() {
               {name}
             </Link>
           ))}
+
+          {/* Logout Button */}
+          {session?.user && (
+            <button
+              onClick={() => signOut({ callbackUrl: '/' })}
+              className="ml-4 text-sm text-[var(--brand-gold)] hover:underline"
+            >
+              Keluar
+            </button>
+          )}
         </div>
       </div>
 
-    {/* Navigasi mobile (dropdown) */}
-    {isOpen && (
-    <div className="md:hidden absolute top-full left-0 right-0 bg-[var(--background)] z-50 px-12 pb-4 flex flex-col gap-2 text-sm font-semibold border-t border-[var(--brand-darker)]">
-        {navItems.map(({ name, href }) => (
-        <Link
-            key={href}
-            href={href}
-            onClick={() => setIsOpen(false)}
-            className={`block py-2 transition-colors hover:text-[var(--brand-gold)] ${
-            isActive(href) ? 'text-[var(--brand-gold)]' : ''
-            }`}
-        >
-            {name}
-        </Link>
-        ))}
-    </div>
-    )}
+      {/* Mobile Dropdown Nav */}
+      {isOpen && (
+        <div className="md:hidden absolute top-full left-0 right-0 bg-[var(--background)] z-50 px-12 pb-4 flex flex-col gap-2 text-sm font-semibold border-t border-[var(--brand-darker)]">
+          {navItems.map(({ name, href }) => (
+            <Link
+              key={href}
+              href={href}
+              onClick={() => setIsOpen(false)}
+              className={`block py-2 transition-colors hover:text-[var(--brand-gold)] ${
+                isActive(href) ? 'text-[var(--brand-gold)]' : ''
+              }`}
+            >
+              {name}
+            </Link>
+          ))}
+
+          {/* Logout Mobile */}
+          {session?.user && (
+            <button
+              onClick={() => {
+                setIsOpen(false)
+                signOut({ callbackUrl: '/' })
+              }}
+              className="text-left py-2 text-[var(--brand-gold)] hover:underline"
+            >
+              Keluar
+            </button>
+          )}
+        </div>
+      )}
     </nav>
   )
 }

@@ -2,8 +2,8 @@
 
 import React from 'react';
 import Link from 'next/link';
-import ActionButton from '@/components/ui/ActionButton';
-import PageHeader from '@/components/ui/PageHeader';
+import ActionButton from '@/src/components/ui/ActionButton';
+import PageHeader from '@/src/components/ui/PageHeader';
 import {
   Book,        // Ikon untuk tombol "Tambah Buku Baru"
   BookOpen,    // Ikon sampul/placeholder

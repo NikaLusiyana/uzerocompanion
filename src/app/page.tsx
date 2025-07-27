@@ -3,9 +3,63 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
+import { signIn } from 'next-auth/react'
 
 export default function Home() {
   const [flipped, setFlipped] = useState(false)
+
+  const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+
+    const form = e.currentTarget
+    const username = (form.querySelector('#username') as HTMLInputElement)?.value
+    const email = (form.querySelector('#email-reg') as HTMLInputElement)?.value
+    const password = (form.querySelector('#password-reg') as HTMLInputElement)?.value
+    const confirmPassword = (form.querySelector('#confirmPassword') as HTMLInputElement)?.value
+
+    if (password !== confirmPassword) {
+      alert("Konfirmasi password tidak cocok.")
+      return
+    }
+
+    try {
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, email, password }),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        alert(data.error || 'Gagal mendaftar.')
+        return
+      }
+
+      alert('Registrasi berhasil! Silakan login.')
+      setFlipped(false)
+    } catch (err) {
+      console.error(err)
+      alert('Terjadi kesalahan saat mendaftar.')
+    }
+  }
+
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    const form = e.currentTarget
+    const email = (form.querySelector('#email') as HTMLInputElement)?.value
+    const password = (form.querySelector('#password') as HTMLInputElement)?.value
+
+    const res = await signIn('credentials', {
+      redirect: true,
+      email,
+      password,
+      callbackUrl: '/home',
+    })
+
+    // Optional handling jika redirect false:
+    // if (res?.error) alert('Login gagal')
+  }
 
   return (
     <div className="w-full max-w-8xl mx-auto py-12 items-center">
@@ -40,14 +94,15 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="w-full md:w-2/5 max-w-md perspective items-center">
+        {/* Auth Card */}
+        <div className="w-full md:w-2/5 max-w-md perspective items-center mt-10">
           <div className={`relative w-full h-[480px] transition-transform duration-700 [transform-style:preserve-3d] ${flipped ? '[transform:rotateY(180deg)]' : ''}`}>
 
             {/* LOGIN SIDE */}
             <div className="absolute inset-0 backface-hidden bg-[var(--brand-dark)] rounded-xl shadow-lg text-brand-light p-8 flex flex-col justify-between">
               <div>
                 <h2 className="text-3xl md:text-4xl font-bold text-center mb-6 font-cinzel tracking-wide">MASUK KE UZERO</h2>
-                <form className="space-y-4">
+                <form className="space-y-4" onSubmit={handleLogin}>
                   <div>
                     <label htmlFor="email" className="block mb-1 font-medium">Email</label>
                     <input
@@ -90,7 +145,7 @@ export default function Home() {
             <div className="absolute inset-0 backface-hidden rotateY-180 bg-[var(--brand-dark)] rounded-xl shadow-lg text-brand-light p-8 flex flex-col justify-between">
               <div>
                 <h2 className="text-3xl md:text-4xl font-bold text-center mb-6 font-cinzel tracking-wide">Daftar Akun Baru</h2>
-                <form className="space-y-4">
+                <form className="space-y-4" onSubmit={handleRegister}>
                   <div>
                     <label htmlFor="username" className="block mb-1 font-medium">Nama Pengguna</label>
                     <input
@@ -157,7 +212,6 @@ export default function Home() {
 
           </div>
         </div>
-
       </div>
     </div>
   )

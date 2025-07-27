@@ -1,5 +1,5 @@
-import Navbar from "@/components/ui/Navbar";
-import Footer from "@/components/ui/Footer";
+import Navbar from "@/src/components/ui/Navbar"; // Komponen navigasi atas
+import Footer from "@/src/components/ui/Footer"; // Komponen footer bawah
 
 export default function HomeLayout({ children }: { children: React.ReactNode }) {
   return (

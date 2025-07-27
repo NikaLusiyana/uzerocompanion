@@ -13,10 +13,10 @@ import {
   Trash2       // Ikon aksi hapus
 } from 'lucide-react'
 
-import ActionButton from '@/components/ui/ActionButton'; // Komponen tombol aksi reusable
-import PageHeader from '@/components/ui/PageHeader'; // Komponen container dan tombol untuk header fitur 
-import { StatCard } from '@/components/ui/StatCard'; // Komponen untuk status card
-import { SearchBar } from '@/components/ui/SearchBar';
+import ActionButton from '@/src/components/ui/ActionButton'; // Komponen tombol aksi reusable
+import PageHeader from '@/src/components/ui/PageHeader'; // Komponen container dan tombol untuk header fitur 
+import { StatCard } from '@/src/components/ui/StatCard'; // Komponen untuk status card
+import { SearchBar } from '@/src/components/ui/SearchBar';
 
 export default function Page() {
   // Daftar dummy data buku
