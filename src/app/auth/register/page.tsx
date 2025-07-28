@@ -105,43 +105,6 @@ export default function RegisterPage() {
                 </div>
               </div>
 
-              {/* Fantasy Profile Section */}
-              <div className="pt-4 border-t border-[var(--brand-darker)]">
-                <h3 className="font-cinzel text-lg text-[var(--brand-accent)] mb-3">Profil Fantasi Anda</h3>
-                
-                <div>
-                  <label htmlFor="faction" className="block mb-1 font-medium">
-                    Faksi Pilihan
-                  </label>
-                  <select
-                    id="faction"
-                    className="w-full px-4 py-2 rounded bg-[var(--brand-light)] text-black focus:ring-2 focus:ring-[var(--brand-gold)]"
-                  >
-                    <option value="">Pilih faksi...</option>
-                    <option value="keepers">Penjaga Warisan</option>
-                    <option value="seekers">Pencari Kebenaran</option>
-                    <option value="reclaimers">Penebus Dosa</option>
-                  </select>
-                </div>
-
-                <div className="mt-3">
-                  <label className="block mb-1 font-medium">
-                    Minat Khusus
-                  </label>
-                  <div className="space-y-2">
-                    {['Worldbuilding', 'Karakter', 'Lokasi', 'Sejarah'].map((interest) => (
-                      <label key={interest} className="flex items-center space-x-2">
-                        <input
-                          type="checkbox"
-                          className="rounded bg-[var(--brand-light)] text-[var(--brand-gold)] focus:ring-[var(--brand-gold)]"
-                        />
-                        <span>{interest}</span>
-                      </label>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
               {/* Terms and Submit */}
               <div className="pt-4">
                 <label className="flex items-start space-x-2">

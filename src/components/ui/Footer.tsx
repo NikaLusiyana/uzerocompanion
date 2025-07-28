@@ -11,8 +11,8 @@ export default function Footer() {
         
         {/* Navigasi link ke halaman Tentang dan Kontak */}
         <div className="flex gap-4 text-md font-medium">
-          <a href="/about" className="hover:text-[var(--brand-gold)] transition">About</a>
-          <a href="/contact" className="hover:text-[var(--brand-gold)] transition">Contact</a>
+          <a href="/home/about" className="hover:text-[var(--brand-gold)] transition">About</a>
+          <a href="/home/contact" className="hover:text-[var(--brand-gold)] transition">Contact</a>
         </div>
       </div>
     </footer>
