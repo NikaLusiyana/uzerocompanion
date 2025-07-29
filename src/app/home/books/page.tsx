@@ -10,6 +10,9 @@ import {
 import ActionButton from '@/src/components/ui/ActionButton';
 import PageHeader from '@/src/components/ui/PageHeader';
 import { StatCard } from '@/src/components/ui/StatCard';
+import ConfirmDialog from '@/src/components/ui/ConfirmDialog';
+import CustomAlert from '@/src/components/ui/CustomAlert';
+
 
 interface Book {
   id: number
@@ -31,6 +34,11 @@ export default function Page() {
   const [books, setBooks] = useState<Book[]>([])
   const [stats, setStats] = useState<Stats | null>(null)
   const [loading, setLoading] = useState(true)
+  const [alertMessage, setAlertMessage] = useState('')
+  const [alertType, setAlertType] = useState<'success' | 'error' | 'info'>('info')
+  const [showConfirm, setShowConfirm] = useState(false)
+  const [bookToDelete, setBookToDelete] = useState<number | null>(null)
+
 
   useEffect(() => {
     fetch('/api/books')
@@ -42,8 +50,52 @@ export default function Page() {
       .finally(() => setLoading(false))
   }, [])
 
+  const confirmDelete = (id: number) => {
+    setBookToDelete(id)
+    setShowConfirm(true)
+  }
+
+  const handleDelete = async () => {
+    if (!bookToDelete) return
+
+    try {
+      const res = await fetch(`/api/books/${bookToDelete}`, {
+        method: 'DELETE'
+      })
+
+      if (res.ok) {
+        setAlertMessage('Buku berhasil dihapus!')
+        setAlertType('success')
+        setBooks(prev => prev.filter(book => book.id !== bookToDelete))
+      } else {
+        const err = await res.json()
+        setAlertMessage('Gagal menghapus: ' + (err.message || 'Unknown error'))
+        setAlertType('error')
+      }
+    } catch (e) {
+      console.error(e)
+      setAlertMessage('Terjadi kesalahan saat menghapus buku')
+      setAlertType('error')
+    } finally {
+      setShowConfirm(false)
+      setBookToDelete(null)
+    }
+  }
+
   return (
     <>
+      {showConfirm && (
+        <ConfirmDialog
+          open={showConfirm}
+          message="Yakin ingin menghapus buku ini? Tindakan ini tidak bisa dibatalkan."
+          onConfirm={handleDelete}
+          onCancel={() => {
+            setShowConfirm(false)
+            setBookToDelete(null)
+          }}
+        />
+      )}
+      {alertMessage && <CustomAlert message={alertMessage} type={alertType} />}
       <PageHeader
         title="Daftar Buku"
         subtitle="Kelola koleksi buku Uzero Anda"
@@ -138,12 +190,19 @@ export default function Page() {
                       <td className="px-6 py-4 text-[var(--brand-light)] opacity-80 text-sm">{book.lastUpdated}</td>
                       <td className="px-6 py-4">
                         <div className="flex justify-end gap-2">
-                          <button className="p-2 text-[var(--brand-gold)] hover:text-[var(--brand-accent)] hover:bg-[var(--brand-blue)] rounded transition-colors">
-                            <Edit size={18} />
-                          </button>
-                          <button className="p-2 text-[var(--brand-gold)] hover:text-[var(--brand-accent)] hover:bg-[var(--brand-blue)] rounded transition-colors">
+                          <Link href={`/home/books/${book.id}/edit`}>
+                            <button className="p-2 text-[var(--brand-gold)] hover:text-[var(--brand-accent)] hover:bg-[var(--brand-blue)] rounded transition-colors">
+                              <Edit size={18} />
+                            </button>
+                          </Link>
+
+                          <button
+                            onClick={() => confirmDelete(book.id)}
+                            className="p-2 text-[var(--brand-gold)] hover:text-[var(--brand-accent)] hover:bg-red-800 rounded transition-colors"
+                          >
                             <Trash2 size={18} />
                           </button>
+
                         </div>
                       </td>
                     </tr>
