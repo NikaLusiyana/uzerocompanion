@@ -2,10 +2,16 @@
 
 import { prisma } from '@/lib/prisma'
 import { NextRequest, NextResponse } from 'next/server'
+import { URL } from 'url'
 
 // GET → ambil satu buku
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
-  const id = parseInt(params.id)
+export async function GET(req: NextRequest) {
+  const { pathname } = new URL(req.url)
+  const id = parseInt(pathname.split('/').pop() || '')
+
+  if (isNaN(id)) {
+    return NextResponse.json({ message: 'ID tidak valid' }, { status: 400 })
+  }
 
   const book = await prisma.book.findUnique({ where: { id } })
 

@@ -27,7 +27,7 @@ export default function ConfirmDialog({
     }
     if (open) document.addEventListener('keydown', handleEsc)
     return () => document.removeEventListener('keydown', handleEsc)
-  }, [open])
+  }, [open, onCancel])
 
   if (!open) return null
 
