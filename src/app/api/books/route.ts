@@ -1,5 +1,3 @@
-// 📄 src/app/api/books/route.ts
-
 import { prisma } from '@/lib/prisma'
 import { NextResponse, NextRequest } from 'next/server'
 import { Book } from '@prisma/client'
@@ -7,13 +5,13 @@ import { Book } from '@prisma/client'
 // GET → ambil semua buku
 export async function GET() {
   const books = await prisma.book.findMany({
-    orderBy: { lastUpdated: 'desc' }
+    orderBy: { lastUpdated: 'desc' },
   })
 
   const stats = {
     totalBooks: books.length,
     published: books.filter((b: Book) => b.status === 'Published').length,
-    inProgress: books.filter((b: Book) => b.status === 'Draft').length
+    inProgress: books.filter((b: Book) => b.status === 'Draft').length,
   }
 
   return NextResponse.json({ books, stats })
@@ -23,10 +21,8 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-
     const { title, author, status, progress, cover } = body
 
-    // Validasi sederhana
     if (!title || !author || typeof progress !== 'number') {
       return NextResponse.json(
         { message: 'Data tidak lengkap atau tidak valid' },
@@ -40,8 +36,8 @@ export async function POST(req: NextRequest) {
         author,
         status,
         progress,
-        cover: cover || null // cover bisa null
-      }
+        cover: cover || null,
+      },
     })
 
     return NextResponse.json(book, { status: 201 })

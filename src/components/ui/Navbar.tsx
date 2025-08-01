@@ -1,11 +1,12 @@
+// 📄 src/components/ui/Navbar.tsx
 'use client'
 
-import { useState } from 'react'
-import Image from 'next/image'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { signOut, useSession } from 'next-auth/react'
-import { Menu, X } from 'lucide-react'
+import { useState } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { signOut, useSession } from 'next-auth/react';
+import { Menu, X, LogOut } from 'lucide-react';
 
 export default function Navbar() {
   const pathname = usePathname()
@@ -62,8 +63,9 @@ export default function Navbar() {
           {session?.user && (
             <button
               onClick={() => signOut({ callbackUrl: '/' })}
-              className="ml-4 text-sm text-[var(--brand-gold)] hover:underline"
+              className="ml-4 inline-flex items-center gap-2 text-sm text-[var(--brand-gold)] hover:underline"
             >
+              <LogOut className="w-4 h-4" strokeWidth={3.0} />
               Keluar
             </button>
           )}
@@ -95,7 +97,7 @@ export default function Navbar() {
               }}
               className="text-left py-2 text-[var(--brand-gold)] hover:underline"
             >
-              Keluar
+              <LogOut className="w-4 h-4" strokeWidth={2.5} />
             </button>
           )}
         </div>
