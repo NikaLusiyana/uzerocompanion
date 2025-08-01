@@ -63,11 +63,34 @@ model VerificationToken {
 }
 
 model Book {
-  id           Int      @id @default(autoincrement())
-  title        String
-  author       String
-  status       String   // "Published" | "Draft"
-  progress     Int
-  lastUpdated  DateTime @updatedAt
-  cover        String?  // optional URL ke gambar
+  id              Int        @id @default(autoincrement())
+  title           String
+  author          String
+  status          String
+  progress        Int        @default(0)
+  cover           String?
+  targetWordCount Int        @default(0)
+  lastUpdated     DateTime   @updatedAt
+  createdAt       DateTime   @default(now())
+
+  // relasi
+  genres          Genre[]    @relation("BookGenres")
+  chapters        Chapter[]
 }
+
+model Genre {
+  id     Int     @id @default(autoincrement())
+  name   String  @unique
+  books  Book[]  @relation("BookGenres")
+}
+
+
+model Chapter {
+  id      Int    @id @default(autoincrement())
+  title   String
+  content String
+  book    Book   @relation(fields: [bookId], references: [id])
+  bookId  Int
+}
+
+

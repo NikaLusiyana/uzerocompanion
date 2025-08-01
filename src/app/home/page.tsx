@@ -60,9 +60,6 @@ export default function HomePage() {
           <Link href="/home/books/create">
             <ActionButton icon={<Book size={16} />}>Tambah Buku Baru</ActionButton>
           </Link>
-          <Link href="/home/chapters/create">
-            <ActionButton icon={<ScrollText size={16} />}>Tambah Chapter Baru</ActionButton>
-          </Link>
           <Link href="/home/worldbuilding/create">
             <ActionButton icon={<Globe2 size={16} />}>Tambah Worldbuilding</ActionButton>
           </Link>

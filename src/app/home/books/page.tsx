@@ -2,19 +2,26 @@
 
 'use client'
 
-import React, { useEffect, useState } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
+import React, { useEffect, useState } from 'react'
+import Link from 'next/link'
+
 import {
-  Book, BookOpen, Plus, Search, Filter, Bookmark, Edit, Trash2
-} from 'lucide-react';
-import ActionButton from '@/src/components/ui/ActionButton';
-import PageHeader from '@/src/components/ui/PageHeader';
-import { StatCard } from '@/src/components/ui/StatCard';
-import ConfirmDialog from '@/src/components/ui/ConfirmDialog';
-import CustomAlert from '@/src/components/ui/CustomAlert';
+  Book,
+  BookOpen,
+  Plus,
+  Search,
+  Bookmark,
+} from 'lucide-react'
 
+import ActionButton from '@/src/components/ui/ActionButton'
+import PageHeader from '@/src/components/ui/PageHeader'
+import { StatCard } from '@/src/components/ui/StatCard'
+import ConfirmDialog from '@/src/components/ui/ConfirmDialog'
+import CustomAlert from '@/src/components/ui/CustomAlert'
+import BookRow from '@/src/components/books/BookRow'
+import Pagination from '@/src/components/ui/Pagination' // ✅ pastikan komponen ini ada
 
+// 🔹 Types
 interface Book {
   id: number
   title: string
@@ -23,6 +30,8 @@ interface Book {
   progress: number
   lastUpdated: string
   cover?: string
+  targetWords: number
+  genres: { name: string }[]
 }
 
 interface Stats {
@@ -31,26 +40,81 @@ interface Stats {
   inProgress: number
 }
 
+const genreList = [
+  'Fantasy',
+  'Science Fiction',
+  'Romance',
+  'Mystery',
+  'Thriller',
+  'Historical',
+  'Adventure',
+  'Horror',
+  'Drama',
+  'Slice of Life',
+]
+
+// 🔹 Component
 export default function Page() {
   const [books, setBooks] = useState<Book[]>([])
   const [stats, setStats] = useState<Stats | null>(null)
+
   const [loading, setLoading] = useState(true)
+
+  const [searchTerm, setSearchTerm] = useState('')
+  const [statusFilter, setStatusFilter] = useState<string | null>(null)
+  const [selectedGenres, setSelectedGenres] = useState<string[]>([])
+
   const [alertMessage, setAlertMessage] = useState('')
   const [alertType, setAlertType] = useState<'success' | 'error' | 'info'>('info')
+
   const [showConfirm, setShowConfirm] = useState(false)
   const [bookToDelete, setBookToDelete] = useState<number | null>(null)
 
+  const [currentPage, setCurrentPage] = useState(1)
+  const [totalPages, setTotalPages] = useState(1)
+  const limit = 10
+
+  const fetchBooksAndStats = async (
+    search?: string,
+    status?: string | null,
+    genres?: string[],
+    page: number = 1
+  ) => {
+    try {
+      setLoading(true)
+      const params = new URLSearchParams()
+
+      if (search) params.append('search', search)
+      if (status) params.append('status', status)
+      if (genres && genres.length > 0) {
+        genres.forEach((name) => params.append('genres', name))
+      }
+
+      params.append('page', page.toString())
+      params.append('limit', limit.toString())
+
+      const res = await fetch(`/api/books?${params.toString()}`)
+      if (!res.ok) throw new Error('Gagal mengambil data buku')
+      const data = await res.json()
+
+      setBooks(data.books ?? [])
+      setStats(data.stats)
+      setTotalPages(data.totalPages ?? 1)
+      setCurrentPage(page)
+    } catch (error) {
+      console.error(error)
+      setAlertMessage('Gagal memuat ulang data')
+      setAlertType('error')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
-    fetch('/api/books')
-      .then(res => res.json())
-      .then(data => {
-        setBooks(data.books)
-        setStats(data.stats)
-      })
-      .finally(() => setLoading(false))
+    fetchBooksAndStats()
   }, [])
 
+  // 🔹 Handlers
   const confirmDelete = (id: number) => {
     setBookToDelete(id)
     setShowConfirm(true)
@@ -60,14 +124,12 @@ export default function Page() {
     if (!bookToDelete) return
 
     try {
-      const res = await fetch(`/api/books/${bookToDelete}`, {
-        method: 'DELETE'
-      })
+      const res = await fetch(`/api/books/${bookToDelete}`, { method: 'DELETE' })
 
       if (res.ok) {
         setAlertMessage('Buku berhasil dihapus!')
         setAlertType('success')
-        setBooks(prev => prev.filter(book => book.id !== bookToDelete))
+        await fetchBooksAndStats(searchTerm, statusFilter, selectedGenres, currentPage)
       } else {
         const err = await res.json()
         setAlertMessage('Gagal menghapus: ' + (err.message || 'Unknown error'))
@@ -83,6 +145,31 @@ export default function Page() {
     }
   }
 
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const term = e.target.value
+    setSearchTerm(term)
+    fetchBooksAndStats(term, statusFilter, selectedGenres, 1)
+  }
+
+  const handleStatusChange = (newStatus: string | null) => {
+    setStatusFilter(newStatus)
+    fetchBooksAndStats(searchTerm, newStatus, selectedGenres, 1)
+  }
+
+  const handleGenreToggle = (genre: string) => {
+    const newGenres = selectedGenres.includes(genre)
+      ? selectedGenres.filter((g) => g !== genre)
+      : [...selectedGenres, genre]
+
+    setSelectedGenres(newGenres)
+    fetchBooksAndStats(searchTerm, statusFilter, newGenres, 1)
+  }
+
+  const handlePageChange = (page: number) => {
+    fetchBooksAndStats(searchTerm, statusFilter, selectedGenres, page)
+  }
+
+  // 🔹 Render
   return (
     <>
       {showConfirm && (
@@ -96,7 +183,9 @@ export default function Page() {
           }}
         />
       )}
+
       {alertMessage && <CustomAlert message={alertMessage} type={alertType} />}
+
       <PageHeader
         title="Daftar Buku"
         subtitle="Kelola koleksi buku Uzero Anda"
@@ -107,7 +196,6 @@ export default function Page() {
         }
       />
 
-      {/* Stats Section */}
       {stats && (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
           <StatCard icon={<BookOpen size={20} />} label="Total Buku" value={stats.totalBooks} />
@@ -116,28 +204,64 @@ export default function Page() {
         </div>
       )}
 
-      {/* Search and Filter */}
+      {/* Search & Filter */}
       <div className="flex flex-col sm:flex-row gap-3 mb-6">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--brand-light)] opacity-60" size={18} />
-          <input 
-            type="text" 
-            placeholder="Cari buku..." 
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={handleSearchChange}
+            placeholder="Cari buku..."
             className="w-full pl-10 pr-4 py-3 bg-[var(--brand-darker)] rounded-xl border border-[var(--brand-darker)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-gold)] text-[var(--brand-light)] placeholder-[var(--brand-light)] placeholder-opacity-60"
           />
         </div>
-        <div className="flex gap-3">
-          <button className="flex items-center gap-2 px-4 py-2 bg-[var(--brand-darker)] rounded-lg border border-[var(--brand-darker)] text-[var(--brand-light)]">
-            <Filter size={16} />
-            <span>Filter</span>
-          </button>
+
+        <div className="flex gap-2 flex-wrap">
+          {['All', 'Published', 'Draft'].map((label) => {
+            const value = label === 'All' ? null : label
+            const isActive = statusFilter === value
+
+            return (
+              <button
+                key={label}
+                onClick={() => handleStatusChange(value)}
+                className={`px-4 py-2 rounded-lg text-sm transition-colors ${
+                  isActive
+                    ? 'bg-[var(--brand-gold)] text-[var(--brand-darker)]'
+                    : 'bg-[var(--brand-darker)] text-[var(--brand-light)] hover:bg-[var(--brand-dark)]'
+                }`}
+              >
+                {label}
+              </button>
+            )
+          })}
         </div>
       </div>
 
-      {/* Tabel Buku */}
+      {/* Genre Filter */}
+      <div className="flex gap-2 flex-wrap mb-6">
+        {genreList.map((genre) => {
+          const isSelected = selectedGenres.includes(genre)
+          return (
+            <button
+              key={genre}
+              onClick={() => handleGenreToggle(genre)}
+              className={`px-3 py-2 rounded-full text-sm transition-all border ${
+                isSelected
+                  ? 'bg-[var(--brand-gold)] text-[var(--brand-darker)] border-transparent'
+                  : 'bg-[var(--brand-darker)] text-[var(--brand-light)] hover:bg-[var(--brand-dark)] border-[var(--brand-darker)]'
+              }`}
+            >
+              {genre}
+            </button>
+          )
+        })}
+      </div>
+
+      {/* Table Buku */}
       {!loading && books.length > 0 && (
-        <div className="bg-[var(--brand-darker)] rounded-lg overflow-hidden mb-6">
-          {/* Books Table */}
+        <>
           <div className="bg-[var(--brand-darker)] rounded-lg overflow-hidden mb-6">
             <div className="overflow-x-auto">
               <table className="w-full">
@@ -145,6 +269,7 @@ export default function Page() {
                   <tr>
                     <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--brand-accent)]">Judul Buku</th>
                     <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--brand-accent)]">Status</th>
+                    <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--brand-accent)]">Genre</th>
                     <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--brand-accent)]">Progress</th>
                     <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--brand-accent)]">Terakhir Diupdate</th>
                     <th className="px-6 py-4 text-right text-sm font-semibold text-[var(--brand-accent)]">Aksi</th>
@@ -152,73 +277,22 @@ export default function Page() {
                 </thead>
                 <tbody>
                   {books.map((book) => (
-                    <tr key={book.id} className="hover:bg-[var(--brand-dark)] transition-colors">
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-4">
-                          <div className="w-10 h-14 bg-[var(--brand-darker)] rounded flex items-center justify-center overflow-hidden">
-                            {book.cover ? (
-                              <Image
-                                src={book.cover}
-                                alt={book.title}
-                                width={40} // atau ukuran yang sesuai
-                                height={56}
-                                className="w-full h-full object-cover"
-                              />
-                            ) : (
-                              <BookOpen size={20} className="text-[var(--brand-accent)] opacity-60" />
-                            )}
-                          </div>
-                          <div>
-                            <p className="font-medium text-[var(--brand-light)]">{book.title}</p>
-                            <p className="text-sm text-[var(--brand-light)] opacity-80">{book.author}</p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          book.status === "Published" 
-                            ? "bg-[var(--brand-blue)] text-[var(--brand-accent)]" 
-                            : "bg-[var(--background)] text-[var(--brand-gold)]"
-                        }`}>
-                          {book.status}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-2">
-                          <div className="w-24 bg-[var(--background)] rounded-full h-2">
-                            <div 
-                              className="bg-[var(--brand-gold)] h-2 rounded-full" 
-                              style={{ width: `${book.progress}%` }}
-                            ></div>
-                          </div>
-                          <span className="text-sm text-[var(--brand-light)] opacity-80">{book.progress}%</span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-[var(--brand-light)] opacity-80 text-sm">{book.lastUpdated}</td>
-                      <td className="px-6 py-4">
-                        <div className="flex justify-end gap-2">
-                          <Link href={`/home/books/${book.id}/edit`}>
-                            <button className="p-2 text-[var(--brand-gold)] hover:text-[var(--brand-accent)] hover:bg-[var(--brand-blue)] rounded transition-colors">
-                              <Edit size={18} />
-                            </button>
-                          </Link>
-
-                          <button
-                            onClick={() => confirmDelete(book.id)}
-                            className="p-2 text-[var(--brand-gold)] hover:text-[var(--brand-accent)] hover:bg-red-800 rounded transition-colors"
-                          >
-                            <Trash2 size={18} />
-                          </button>
-
-                        </div>
-                      </td>
-                    </tr>
+                    <BookRow key={book.id} book={book} onDelete={confirmDelete} />
                   ))}
                 </tbody>
               </table>
             </div>
           </div>
-        </div>
+
+          {/* 🔸 Pagination */}
+          <div className="flex justify-center mb-12">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+          </div>
+        </>
       )}
 
       {/* Empty State */}
@@ -226,7 +300,9 @@ export default function Page() {
         <div className="flex flex-col items-center justify-center py-12 text-center">
           <BookOpen size={48} className="text-[var(--brand-accent)] opacity-60 mb-4" />
           <h3 className="text-lg font-medium text-[var(--brand-light)]">Belum ada buku</h3>
-          <p className="text-[var(--brand-light)] opacity-80 mt-1">Mulai dengan menambahkan buku pertama Anda</p>
+          <p className="text-[var(--brand-light)] opacity-80 mt-1">
+            Mulai dengan menambahkan buku pertama Anda
+          </p>
           <Link href="/home/books/create">
             <button className="mt-4 flex items-center gap-2 bg-[var(--brand-gold)] hover:bg-[var(--brand-goldhover)] text-[var(--brand-darker)] hover:text-[var(--brand-accent)] px-4 py-2 rounded-lg transition-colors">
               <Plus size={16} />
@@ -236,10 +312,12 @@ export default function Page() {
         </div>
       )}
 
-      {/* Optional loading skeleton */}
+      {/* Loading State */}
       {loading && (
-        <div className="text-[var(--brand-light)] text-sm opacity-80">Memuat data buku...</div>
+        <div className="text-[var(--brand-light)] text-sm opacity-80">
+          Memuat data buku...
+        </div>
       )}
     </>
-  );
+  )
 }

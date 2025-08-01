@@ -9,6 +9,11 @@ import ActionButton from '@/src/components/ui/ActionButton'
 import PageHeader from '@/src/components/ui/PageHeader'
 import { ArrowBigLeftDashIcon } from 'lucide-react'
 
+type Genre = {
+  id: number
+  name: string
+}
+
 export default function EditBookPage() {
   const router = useRouter()
   const { id } = useParams()
@@ -18,16 +23,45 @@ export default function EditBookPage() {
     author: '',
     status: 'Draft',
     progress: 0,
+    targetWordCount: '',
     cover: ''
   })
 
+  const [genres, setGenres] = useState<Genre[]>([])
+  const [selectedGenres, setSelectedGenres] = useState<number[]>([])
   const [loading, setLoading] = useState(false)
 
+  // Fetch genres
+  useEffect(() => {
+    fetch('/api/genres')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) setGenres(data)
+      })
+      .catch(err => console.error('Gagal memuat genre:', err))
+  }, [])
+
+  // Fetch book data
   useEffect(() => {
     if (!id) return
+
     fetch(`/api/books/${id}`)
       .then(res => res.json())
-      .then(data => setForm(data))
+      .then(data => {
+        setForm({
+          title: data.title || '',
+          author: data.author || '',
+          status: data.status || 'Draft',
+          progress: data.progress || 0,
+          targetWordCount: String(data.targetWordCount || ''),
+          cover: data.cover || ''
+        })
+
+        // Jika ada genres, simpan id-nya
+        if (Array.isArray(data.genres)) {
+          setSelectedGenres(data.genres.map((g: Genre) => g.id))
+        }
+      })
       .catch(err => {
         console.error(err)
         alert('Gagal memuat data buku')
@@ -42,6 +76,12 @@ export default function EditBookPage() {
     }))
   }
 
+  const handleGenreToggle = (id: number) => {
+    setSelectedGenres(prev =>
+      prev.includes(id) ? prev.filter(g => g !== id) : [...prev, id]
+    )
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
@@ -50,7 +90,11 @@ export default function EditBookPage() {
       const res = await fetch(`/api/books/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(form)
+        body: JSON.stringify({
+          ...form,
+          targetWordCount: parseInt(form.targetWordCount) || 0,
+          genreIds: selectedGenres
+        })
       })
 
       if (res.ok) {
@@ -92,6 +136,7 @@ export default function EditBookPage() {
             className="w-full p-2 rounded bg-[var(--background)] text-[var(--brand-light)]"
           />
         </div>
+
         <div className="mb-4">
           <label className="block mb-1 font-medium">Penulis</label>
           <input
@@ -102,6 +147,7 @@ export default function EditBookPage() {
             className="w-full p-2 rounded bg-[var(--background)] text-[var(--brand-light)]"
           />
         </div>
+
         <div className="mb-4">
           <label className="block mb-1 font-medium">Status</label>
           <select
@@ -114,19 +160,39 @@ export default function EditBookPage() {
             <option value="Published">Published</option>
           </select>
         </div>
+
         <div className="mb-4">
-          <label className="block mb-1 font-medium">Progress (%)</label>
+          <label className="block mb-1 font-medium">Target Jumlah Kata</label>
           <input
-            name="progress"
+            name="targetWordCount"
             type="number"
-            value={form.progress}
-            min={0}
-            max={100}
+            value={form.targetWordCount}
             onChange={handleChange}
-            required
             className="w-full p-2 rounded bg-[var(--background)] text-[var(--brand-light)]"
           />
         </div>
+
+        <div className="mb-4">
+          <label className="block mb-1 font-medium">Genre</label>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+            {genres.map(genre => (
+              <label
+                key={genre.id}
+                className="flex items-center bg-[var(--background)] px-3 py-2 rounded text-sm hover:bg-[var(--brand-dark)] transition"
+              >
+                <input
+                  type="checkbox"
+                  value={genre.id}
+                  checked={selectedGenres.includes(genre.id)}
+                  onChange={() => handleGenreToggle(genre.id)}
+                  className="mr-2 accent-[var(--brand-gold)]"
+                />
+                {genre.name}
+              </label>
+            ))}
+          </div>
+        </div>
+
         <div className="mb-6">
           <label className="block mb-1 font-medium">URL Sampul (opsional)</label>
           <input
@@ -136,6 +202,7 @@ export default function EditBookPage() {
             className="w-full p-2 rounded bg-[var(--background)] text-[var(--brand-light)]"
           />
         </div>
+
         <button
           type="submit"
           disabled={loading}
