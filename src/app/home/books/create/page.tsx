@@ -1,4 +1,4 @@
-// 📄 src/app/books/create/page.tsx
+// 📄 src/app/home/books/create/page.tsx
 
 'use client'
 
@@ -54,9 +54,10 @@ export default function Page() {
 
         const error = JSON.parse(rawText)
         message = error.message || message
-      } catch (e) {
-        // response bukan JSON valid
-      }
+        } catch (e) {
+          console.error('Invalid JSON response:', e)
+        }
+
 
       alert(message)
     }

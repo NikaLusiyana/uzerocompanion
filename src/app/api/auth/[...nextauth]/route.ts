@@ -50,7 +50,7 @@ const handler = NextAuth({
   // 🔄 Callback untuk inject data ke session dan token
   callbacks: {
     // Saat token dibuat atau diperbarui
-    async jwt({ token, user, account, profile }) {
+    async jwt({ token, user, account }) {
       // Saat login pertama kali via provider (user baru)
       if (account && user) {
         token.id = user.id;
