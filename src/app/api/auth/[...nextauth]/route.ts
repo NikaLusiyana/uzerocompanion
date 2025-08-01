@@ -2,11 +2,13 @@
 
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
 import { compare } from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 
 const handler = NextAuth({
   providers: [
+    // 🔐 Email/Password login
     CredentialsProvider({
       name: "Credentials",
       credentials: {
@@ -32,29 +34,66 @@ const handler = NextAuth({
         };
       },
     }),
+
+    // 🔗 Google OAuth login
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    }),
   ],
+
+  // 🔐 Session config
   session: {
-    strategy: "jwt", // ✅ Ganti dari "database"
+    strategy: "jwt",
   },
+
+  // 🔄 Callback untuk inject data ke session dan token
   callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
+    // Saat token dibuat atau diperbarui
+    async jwt({ token, user, account, profile }) {
+      // Saat login pertama kali via provider (user baru)
+      if (account && user) {
         token.id = user.id;
-        token.name = user.name;
+
+        // Cek apakah user sudah ada di DB (untuk Google OAuth)
+        const existingUser = await prisma.user.findUnique({
+          where: { email: user.email! },
+        });
+
+        // Jika belum, buat user baru secara otomatis
+        if (!existingUser) {
+          const newUser = await prisma.user.create({
+            data: {
+              email: user.email!,
+              name: user.name ?? "User",
+              image: user.image ?? undefined,
+              // Tidak menyimpan password untuk OAuth
+            },
+          });
+          token.id = newUser.id;
+        } else {
+          token.id = existingUser.id;
+        }
       }
+
       return token;
     },
+
+    // Inject token ke session.user
     async session({ session, token }) {
-      if (token && session.user) {
+      if (session.user && token) {
         session.user.id = token.id as string;
         session.user.name = token.name as string;
       }
       return session;
     },
   },
+
+  // Redirect custom
   pages: {
-    signIn: "/", // redirect ke landing/login
+    signIn: "/",
   },
+
   secret: process.env.NEXTAUTH_SECRET,
 });
 

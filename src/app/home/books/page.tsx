@@ -4,6 +4,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import {
   Book, BookOpen, Plus, Search, Filter, Bookmark, Edit, Trash2
 } from 'lucide-react';
@@ -156,7 +157,13 @@ export default function Page() {
                         <div className="flex items-center gap-4">
                           <div className="w-10 h-14 bg-[var(--brand-darker)] rounded flex items-center justify-center overflow-hidden">
                             {book.cover ? (
-                              <img src={book.cover} alt={book.title} className="w-full h-full object-cover" />
+                              <Image
+                                src={book.cover}
+                                alt={book.title}
+                                width={40} // atau ukuran yang sesuai
+                                height={56}
+                                className="w-full h-full object-cover"
+                              />
                             ) : (
                               <BookOpen size={20} className="text-[var(--brand-accent)] opacity-60" />
                             )}

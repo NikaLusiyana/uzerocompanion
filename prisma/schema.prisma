@@ -17,7 +17,8 @@ model User {
   id        String   @id @default(cuid())
   name      String?
   email     String   @unique
-  password  String
+  password  String?
+  image     String?
   createdAt DateTime @default(now())
 
   // 🔁 Relasi ke NextAuth

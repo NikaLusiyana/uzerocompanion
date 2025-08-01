@@ -8,7 +8,6 @@ import Link from 'next/link'
 import ActionButton from '@/src/components/ui/ActionButton'
 import PageHeader from '@/src/components/ui/PageHeader'
 import {
-  Book,
   ArrowBigLeftDashIcon
 } from 'lucide-react'
 
