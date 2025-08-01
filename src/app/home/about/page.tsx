@@ -141,7 +141,7 @@ export default function Page() {
 
           {/* Worldbuilding */}
           <section>
-            <div className="text-center mb-8">
+            <div className="text-center my-8">
               <h2 className="text-2xl md:text-3xl font-bold text-[var(--brand-light)] font-cinzel mb-2">Worldbuilding Framework</h2>
               <p className="text-[var(--brand-accent)] text-base">
                 Enam bidang utama untuk memetakan dunia fiksimu secara mendalam dan terstruktur

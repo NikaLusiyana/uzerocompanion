@@ -65,7 +65,7 @@ export default function LoginForm({ onRegisterClick }: Props) {
             )}
             <button
             type="submit"
-            className="w-full mt-4 py-2 rounded bg-[var(--brand-gold)] text-black font-bold hover:bg-yellow-600 transition-colors duration-200"
+            className="cursor-pointer w-full mt-4 py-2 rounded bg-[var(--brand-gold)] text-black font-bold hover:bg-yellow-600 transition-colors duration-200"
             >
             Masuk
             </button>
@@ -77,7 +77,7 @@ export default function LoginForm({ onRegisterClick }: Props) {
         <button
         type="button"
         onClick={() => signIn('google', { callbackUrl: '/home' })}
-        className="w-full mt-3 py-2 rounded bg-white text-black font-semibold border flex items-center justify-center gap-2 hover:bg-gray-100 transition"
+        className="cursor-pointer w-full mt-3 py-2 rounded bg-white text-black font-semibold border flex items-center justify-center gap-2 hover:bg-gray-100 transition"
         >
         <FcGoogle className="text-xl" />
         Masuk dengan Google
@@ -88,7 +88,7 @@ export default function LoginForm({ onRegisterClick }: Props) {
             <button
             type="button"
             onClick={onRegisterClick}
-            className="text-[var(--brand-gold)] hover:underline font-medium"
+            className="cursor-pointer text-[var(--brand-gold)] hover:underline hover:font-bold font-medium"
             >
             Daftar sekarang
             </button>

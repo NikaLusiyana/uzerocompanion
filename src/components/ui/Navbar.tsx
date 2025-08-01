@@ -63,7 +63,7 @@ export default function Navbar() {
           {session?.user && (
             <button
               onClick={() => signOut({ callbackUrl: '/' })}
-              className="ml-4 inline-flex items-center gap-2 text-sm text-[var(--brand-gold)] hover:underline"
+              className="cursor-pointer ml-4 inline-flex items-center gap-2 text-sm text-[var(--brand-gold)] hover:underline"
             >
               <LogOut className="w-4 h-4" strokeWidth={3.0} />
               Keluar
@@ -95,7 +95,7 @@ export default function Navbar() {
                 setIsOpen(false)
                 signOut({ callbackUrl: '/' })
               }}
-              className="text-left py-2 text-[var(--brand-gold)] hover:underline"
+              className="cursor-pointer text-left py-2 text-[var(--brand-gold)] hover:underline"
             >
               <LogOut className="w-4 h-4" strokeWidth={2.5} />
             </button>
