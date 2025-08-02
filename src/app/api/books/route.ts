@@ -7,11 +7,13 @@ import { Book, Genre, Chapter } from '@prisma/client';
 // 🔹 GET → Ambil semua buku beserta genre & chapter
 export async function GET(req: NextRequest) {
   try {
-    const { searchParams } = new URL(req.url)
-
-    const search = searchParams.get('search')?.toLowerCase() || ''
-    const statusFilter = searchParams.get('status')
-    const genreFilters = searchParams.getAll('genres') // Ambil array string genre name
+    const { searchParams } = new URL(req.url);
+    const page = parseInt(searchParams.get('page') || '1', 10);
+    const limit = parseInt(searchParams.get('limit') || '4', 10);
+    const skip = (page - 1) * limit;
+    const search = searchParams.get('search')?.toLowerCase() || '';
+    const statusFilter = searchParams.get('status');
+    const genreFilters = searchParams.getAll('genres'); // Ambil array string genre name
 
     const books = await prisma.book.findMany({
       where: {
@@ -49,10 +51,43 @@ export async function GET(req: NextRequest) {
       orderBy: {
         lastUpdated: 'desc',
       },
-    }) as (Book & {
-      genres: Genre[]
-      chapters: Chapter[]
-    })[]
+      skip,
+      take: limit,
+    });
+
+    const totalCount = await prisma.book.count({
+      where: {
+        AND: [
+          search
+            ? {
+                title: {
+                  contains: search,
+                  mode: 'insensitive',
+                },
+              }
+            : {},
+          statusFilter
+            ? {
+                status: statusFilter,
+              }
+            : {},
+          genreFilters.length > 0
+            ? {
+                genres: {
+                  some: {
+                    name: {
+                      in: genreFilters,
+                    },
+                  },
+                },
+              }
+            : {},
+        ],
+      },
+    });
+
+    const totalPages = Math.ceil(totalCount / limit);
+
 
     const booksWithProgress = books.map((book) => {
       const totalWords = book.chapters.reduce((sum: number, chapter: Chapter) => {
@@ -68,7 +103,7 @@ export async function GET(req: NextRequest) {
         totalWords,
         progress,
       }
-    })
+    });
 
     const stats = {
       totalBooks: books.length,
@@ -76,7 +111,7 @@ export async function GET(req: NextRequest) {
       inProgress: booksWithProgress.filter((b) => b.status === 'Draft').length,
     }
 
-    return NextResponse.json({ books: booksWithProgress, stats })
+    return NextResponse.json({ books: booksWithProgress, stats, totalPages})
   } catch (error) {
     console.error('[BOOKS_GET]', error)
     return NextResponse.json({ message: 'Failed to fetch books' }, { status: 500 })

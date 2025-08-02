@@ -19,7 +19,7 @@ import { StatCard } from '@/src/components/ui/StatCard'
 import ConfirmDialog from '@/src/components/ui/ConfirmDialog'
 import CustomAlert from '@/src/components/ui/CustomAlert'
 import BookRow from '@/src/components/books/BookRow'
-import Pagination from '@/src/components/ui/Pagination' // ✅ pastikan komponen ini ada
+import Pagination from '@/src/components/ui/Pagination'
 
 // 🔹 Types
 interface Book {
@@ -72,7 +72,7 @@ export default function Page() {
 
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
-  const limit = 10
+  const limit = 4
 
   const fetchBooksAndStats = async (
     search?: string,

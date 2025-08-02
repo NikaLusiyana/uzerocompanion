@@ -1,7 +1,5 @@
 // 📄 src/app/api/books/[id]/route.ts
 
-// 📄 src/app/api/books/[id]/route.ts
-
 import { prisma } from '@/lib/prisma'
 import { NextRequest, NextResponse } from 'next/server'
 import { URL } from 'url'
