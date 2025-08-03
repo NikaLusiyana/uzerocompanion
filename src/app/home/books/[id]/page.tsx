@@ -2,8 +2,9 @@
 
 'use client'
 
-import { useRouter } from 'next/navigation'
+import { use } from 'react'
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import dayjs from 'dayjs'
 import 'dayjs/locale/id'
@@ -35,7 +36,10 @@ interface BookDetailProps {
   }
 }
 
-export default function BookDetailPage({ params }: BookDetailProps) {
+export default function BookDetailPage({ params }: BookDetailProps & { params: Promise<any> }) {
+  const { id } = use(params)
+  const numericId = parseInt(id, 10)
+
   const [book, setBook] = useState<Book | null>(null)
   const [loading, setLoading] = useState(true)
   const [alertMessage, setAlertMessage] = useState('')
@@ -47,7 +51,7 @@ export default function BookDetailPage({ params }: BookDetailProps) {
   useEffect(() => {
     const fetchBook = async () => {
       try {
-        const res = await fetch(`/api/books/${params.id}`)
+        const res = await fetch(`/api/books/${numericId}`)
         if (!res.ok) throw new Error('Gagal mengambil detail buku')
         const data = await res.json()
         setBook(data)
@@ -60,12 +64,14 @@ export default function BookDetailPage({ params }: BookDetailProps) {
       }
     }
 
-    fetchBook()
-  }, [params.id])
+    if (!isNaN(numericId)) {
+      fetchBook()
+    }
+  }, [numericId])
 
   const handleDelete = async () => {
     try {
-      const res = await fetch(`/api/books/${params.id}`, {
+      const res = await fetch(`/api/books/${numericId}`, {
         method: 'DELETE',
       })
 
@@ -165,7 +171,7 @@ export default function BookDetailPage({ params }: BookDetailProps) {
 
         <div className="flex gap-2">
             <Link href={`/home/books/${book.id}/edit`}>
-              <ActionButton icon={<Plus size={16} />}>
+              <ActionButton icon={<Plus size={16} />} intent="info">
                 Edit Detail Buku
               </ActionButton>
             </Link>
