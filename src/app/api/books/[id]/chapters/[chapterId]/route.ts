@@ -49,6 +49,43 @@ export async function GET(req: NextRequest) {
   }
 }
 
+// 🔹 PATCH → Perbarui chapter
+export async function PATCH(req: NextRequest) {
+  const { bookId, chapterId } = extractIdsFromUrl(req.url);
+
+  if (!bookId || !chapterId) {
+    return NextResponse.json({ message: 'ID tidak valid' }, { status: 400 });
+  }
+
+  try {
+    const body = await req.json();
+    const { title, content } = body;
+
+    const existing = await prisma.chapter.findFirst({
+      where: { id: chapterId, bookId: bookId },
+    });
+
+    if (!existing) {
+      return NextResponse.json({ message: 'Chapter tidak ditemukan' }, { status: 404 });
+    }
+
+    const updated = await prisma.chapter.update({
+      where: { id: chapterId },
+      data: {
+        title,
+        content,
+        lastUpdated: new Date(),
+      },
+    });
+
+    return NextResponse.json(updated);
+  } catch (error) {
+    console.error('[CHAPTER_PATCH]', error);
+    return NextResponse.json({ message: 'Gagal memperbarui chapter' }, { status: 500 });
+  }
+}
+
+
 // 🔹 DELETE → Hapus chapter
 export async function DELETE(req: NextRequest) {
   const { bookId, chapterId } = extractIdsFromUrl(req.url);
