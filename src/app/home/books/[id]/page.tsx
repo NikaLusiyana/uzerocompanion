@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import dayjs from 'dayjs'
 import 'dayjs/locale/id'
-import { Edit, Trash2, Plus, Book, ArrowBigLeftDashIcon } from 'lucide-react'
+import { Trash2, Plus, Book, ArrowBigLeftDashIcon } from 'lucide-react'
 
 import PageHeader from '@/src/components/ui/PageHeader'
 import ActionButton from '@/src/components/ui/ActionButton'
@@ -36,7 +36,9 @@ interface BookDetailProps {
   }
 }
 
-export default function BookDetailPage({ params }: BookDetailProps & { params: Promise<any> }) {
+type BookParams = { id: string }
+
+export default function BookDetailPage({ params }: BookDetailProps & { params: Promise<BookParams> }) {
   const { id } = use(params)
   const numericId = parseInt(id, 10)
 
