@@ -2,12 +2,12 @@
 
 'use client'
 
-import React, { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import Link from 'next/link'
-import ActionButton from '@/src/components/ui/ActionButton'
-import PageHeader from '@/src/components/ui/PageHeader'
-import { ArrowBigLeftDashIcon } from 'lucide-react'
+import React, { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import ActionButton from '@/src/components/ui/ActionButton';
+import PageHeader from '@/src/components/ui/PageHeader';
+import { ArrowBigLeftDashIcon } from 'lucide-react';
 
 type Genre = {
   id: number

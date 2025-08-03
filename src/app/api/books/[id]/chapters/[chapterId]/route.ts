@@ -31,7 +31,7 @@ export async function GET(req: NextRequest, { params }: Params) {
         bookId: true,
         lastUpdated: true,
       },
-    }as any);
+    });
 
     if (!chapter) {
       return NextResponse.json({ error: 'Chapter not found' }, { status: 404 });
@@ -44,13 +44,8 @@ export async function GET(req: NextRequest, { params }: Params) {
   }
 }
 
-
-
 // DELETE → Hapus 1 chapter dari 1 buku
-export async function DELETE(
-  req: NextRequest,
-  { params }: { params: { id: string; chapterId: string } }
-) {
+export async function DELETE(req: NextRequest, { params }: Params) {
   const bookId = Number(params.id);
   const chapterId = Number(params.chapterId);
 
@@ -78,7 +73,7 @@ export async function DELETE(
 
     return NextResponse.json({ message: 'Chapter deleted successfully' });
   } catch (error) {
-    console.error('Error deleting chapter:', error);
+    console.error('[CHAPTER_DELETE_ERROR]', error);
     return NextResponse.json({ error: 'Failed to delete chapter' }, { status: 500 });
   }
 }
