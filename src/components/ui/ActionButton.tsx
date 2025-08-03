@@ -1,26 +1,42 @@
-// 📄 components/ui/ActionButton.tsx → Tombol aksi reusable untuk navigasi atau tindakan utama
-
 'use client'
 
-import { ReactNode } from 'react'; // Tipe untuk children dan icon sebagai elemen React
+import { ReactNode } from 'react';
 
-// Interface untuk properti komponen ActionButton
 interface ActionButtonProps {
-  children: ReactNode;     // Isi teks tombol
-  icon?: ReactNode;        // Opsional: ikon di sisi kiri teks
-  onClick?: () => void;    // Opsional: fungsi yang dipanggil saat tombol diklik
+  children: ReactNode;
+  icon?: ReactNode;
+  onClick?: () => void;
+  intent?: 'default' | 'danger' | 'success' | 'warning' | 'info' | 'secondary';
 }
 
-// Komponen tombol aksi yang dapat digunakan ulang (reusable)
-// Menggunakan Tailwind CSS untuk styling responsif dan transisi warna
-export default function ActionButton({ children, icon, onClick }: ActionButtonProps) {
+export default function ActionButton({
+  children,
+  icon,
+  onClick,
+  intent = 'default',
+}: ActionButtonProps) {
+  const baseClass =
+    'cursor-pointer inline-flex items-center gap-2 rounded-md px-3 py-2 font-medium text-sm transition-colors';
+
+  const intentClass = {
+    default:
+      'bg-[var(--brand-gold)] text-[var(--brand-darker)] hover:bg-[var(--brand-goldhover)] hover:text-[var(--brand-accent)]',
+    danger:
+      'bg-[var(--brand-gold)] hover:bg-red-600 text-[var(--brand-darker)] hover:text-white',
+    success:
+      'bg-[var(--brand-gold)] hover:bg-green-600 text-[var(--brand-darker)] hover:text-white',
+    warning:
+      'bg-[var(--brand-gold)] hover:bg-yellow-500 text-[var(--brand-darker)] hover:text-black',
+    info:
+      'bg-[var(--brand-gold)] hover:bg-blue-600 text-[var(--brand-darker)] hover:text-white',
+    secondary:
+      'bg-[var(--brand-gold)] hover:bg-gray-300 text-[var(--brand-darker)] hover:text-black',
+  }[intent];
+
   return (
-    <button
-      onClick={onClick}
-      className="cursor-pointer inline-flex items-center gap-2 rounded-md bg-[var(--brand-gold)] text-[var(--brand-darker)] px-3 py-2 font-medium text-sm hover:bg-[var(--brand-goldhover)] hover:text-[var(--brand-accent)] transition-colors"
-    >
+    <button onClick={onClick} className={`${baseClass} ${intentClass}`}>
       {icon}
       {children}
     </button>
-  )
+  );
 }

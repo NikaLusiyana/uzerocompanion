@@ -31,7 +31,7 @@ export default function BookRow({ book, onDelete }: Props) {
   return (
     <tr className="hover:bg-[var(--brand-dark)] transition-colors">
       <td className="px-6 py-4">
-        <div className="flex items-center gap-4">
+        <div className="flex items-start gap-4">
           <div className="w-10 h-14 bg-[var(--brand-darker)] rounded flex items-center justify-center overflow-hidden">
             {book.cover ? (
               <Image
@@ -47,7 +47,7 @@ export default function BookRow({ book, onDelete }: Props) {
           </div>
           <div>
             <Link href={`/home/books/${book.id}`}>
-              <p className="font-medium text-[var(--brand-light)] hover:underline hover:text-[var(--brand-gold)] transition-colors">
+              <p className="text-lg font-medium text-[var(--brand-light)] hover:underline hover:text-[var(--brand-gold)] transition-colors">
                 {book.title}
               </p>
             </Link>
@@ -79,10 +79,10 @@ export default function BookRow({ book, onDelete }: Props) {
         </div>
       </td>
       <td className="px-6 py-4 text-[var(--brand-light)] opacity-80 text-sm">
-        {dayjs(book.lastUpdated).format('D MMM YYYY HH:mm A')}
+        {dayjs(book.lastUpdated).format('D MMMM YYYY HH:mm A')}
       </td>
       <td className="px-6 py-4">
-        <div className="flex justify-end gap-2">
+        <div className="flex justify-end gap-1">
           <Link href={`/home/books/${book.id}/edit`}>
             <button className="p-2 text-[var(--brand-gold)] hover:text-[var(--brand-accent)] hover:bg-[var(--brand-blue)] rounded transition-colors">
               <Edit size={18} />

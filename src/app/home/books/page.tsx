@@ -274,12 +274,12 @@ export default function Page() {
               <table className="w-full">
                 <thead>
                   <tr>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--brand-accent)]">Judul Buku</th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--brand-accent)]">Status</th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--brand-accent)]">Genre</th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--brand-accent)]">Progress</th>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-[var(--brand-accent)]">Terakhir Diupdate</th>
-                    <th className="px-6 py-4 text-right text-sm font-semibold text-[var(--brand-accent)]">Aksi</th>
+                    <th className="px-6 py-4 text-left text-md font-semibold text-[var(--brand-accent)]">Judul Buku</th>
+                    <th className="px-6 py-4 text-left text-md font-semibold text-[var(--brand-accent)]">Status</th>
+                    <th className="px-6 py-4 text-left text-md font-semibold text-[var(--brand-accent)]">Genre</th>
+                    <th className="px-6 py-4 text-left text-md font-semibold text-[var(--brand-accent)]">Progress</th>
+                    <th className="px-6 py-4 text-left text-md font-semibold text-[var(--brand-accent)]">Terakhir Diupdate</th>
+                    <th className="px-6 py-4 text-center text-md font-semibold text-[var(--brand-accent)]">Aksi</th>
                   </tr>
                 </thead>
                 <tbody>
