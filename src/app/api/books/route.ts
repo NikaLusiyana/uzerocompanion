@@ -121,7 +121,7 @@ export async function POST(req: NextRequest) {
       status,
       genreIds,
       targetWordCount,
-      sinopsis, // ⬅️ Tambahkan ini
+      sinopsis,
     } = body;
 
     if (!title || !author || !status || !Array.isArray(genreIds)) {
@@ -138,7 +138,7 @@ export async function POST(req: NextRequest) {
         status,
         targetWordCount: targetWordCount || 0,
         progress: 0,
-        sinopsis: sinopsis || null, // ⬅️ Tambahkan ini
+        sinopsis,
         genres: {
           connect: genreIds.map((id: number) => ({ id })),
         },

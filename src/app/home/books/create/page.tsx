@@ -74,7 +74,9 @@ export default function Page() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
+
     try {
+      await new Promise(res => setTimeout(res, 100));
       const res = await fetch('/api/books', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -125,7 +127,7 @@ export default function Page() {
         }
       />
 
-      <form onSubmit={handleSubmit} className="bg-[var(--brand-darker)] p-6 rounded-lg max-w-7xl mx-auto text-[var(--brand-light)]">
+      <form onSubmitCapture={handleSubmit} className="bg-[var(--brand-darker)] p-6 rounded-lg max-w-7xl mx-auto text-[var(--brand-light)]">
         <div className="mb-4">
           <label className="block mb-1 font-medium">Judul</label>
           <input
