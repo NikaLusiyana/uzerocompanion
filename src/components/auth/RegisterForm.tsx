@@ -155,7 +155,7 @@ export default function RegisterForm({ onLoginClick }: Props) {
         <button
           type="button"
           onClick={onLoginClick}
-          className="cursor-pointer text-[var(--brand-gold)] hover:underline font-medium hover:font-bold"
+          className="cursor-pointer text-[var(--brand-gold)] hover:underline font-medium hover:font-bold hover:text-yellow-600"
         >
           Masuk di sini
         </button>

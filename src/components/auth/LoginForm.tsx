@@ -88,7 +88,7 @@ export default function LoginForm({ onRegisterClick }: Props) {
             <button
             type="button"
             onClick={onRegisterClick}
-            className="cursor-pointer text-[var(--brand-gold)] hover:underline hover:font-bold font-medium"
+            className="cursor-pointer text-[var(--brand-gold)] hover:underline hover:font-bold font-medium hover:text-yellow-600"
             >
             Daftar sekarang
             </button>

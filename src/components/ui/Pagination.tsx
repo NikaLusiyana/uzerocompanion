@@ -33,7 +33,7 @@ export default function Pagination({
       <button
         onClick={handlePrevious}
         disabled={currentPage === 1}
-        className="flex items-center gap-1 px-3 py-1 rounded text-sm bg-[var(--brand-dark)] text-[var(--brand-light)] hover:opacity-90 disabled:opacity-30 disabled:cursor-not-allowed transition"
+        className="flex items-center gap-1 px-3 py-2 rounded text-sm bg-[var(--brand-dark)] text-[var(--brand-light)] hover:opacity-90 disabled:opacity-30 disabled:cursor-not-allowed transition"
         aria-label="Halaman sebelumnya"
       >
         <ChevronLeft size={16} />
@@ -47,7 +47,7 @@ export default function Pagination({
       <button
         onClick={handleNext}
         disabled={currentPage === totalPages}
-        className="flex items-center gap-1 px-3 py-1 rounded text-sm bg-[var(--brand-dark)] text-[var(--brand-light)] hover:opacity-90 disabled:opacity-30 disabled:cursor-not-allowed transition"
+        className="flex items-center gap-1 px-3 py-2 rounded text-sm bg-[var(--brand-dark)] text-[var(--brand-light)] hover:opacity-90 disabled:opacity-30 disabled:cursor-not-allowed transition"
         aria-label="Halaman selanjutnya"
       >
         <span>Selanjutnya</span>

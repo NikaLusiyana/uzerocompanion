@@ -2,7 +2,7 @@
 
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
-import { Book, Genre, Chapter } from '@prisma/client';
+import { Chapter } from '@prisma/client';
 
 // 🔹 GET → Ambil semua buku beserta genre & chapter
 export async function GET(req: NextRequest) {
@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
     const skip = (page - 1) * limit;
     const search = searchParams.get('search')?.toLowerCase() || '';
     const statusFilter = searchParams.get('status');
-    const genreFilters = searchParams.getAll('genres'); // Ambil array string genre name
+    const genreFilters = searchParams.getAll('genres');
 
     const books = await prisma.book.findMany({
       where: {
@@ -88,36 +88,28 @@ export async function GET(req: NextRequest) {
 
     const totalPages = Math.ceil(totalCount / limit);
 
-
     const booksWithProgress = books.map((book) => {
       const totalWords = book.chapters.reduce((sum: number, chapter: Chapter) => {
-        return sum + chapter.content.trim().split(/\s+/).length
-      }, 0)
+        return sum + chapter.content.trim().split(/\s+/).length;
+      }, 0);
 
       const progress = book.targetWordCount
         ? Math.min(100, Math.floor((totalWords / book.targetWordCount) * 100))
-        : 0
+        : 0;
 
       return {
         ...book,
         totalWords,
         progress,
-      }
+      };
     });
 
-    const stats = {
-      totalBooks: books.length,
-      published: booksWithProgress.filter((b) => b.status === 'Published').length,
-      inProgress: booksWithProgress.filter((b) => b.status === 'Draft').length,
-    }
-
-    return NextResponse.json({ books: booksWithProgress, stats, totalPages})
+    return NextResponse.json({ books: booksWithProgress, totalPages });
   } catch (error) {
-    console.error('[BOOKS_GET]', error)
-    return NextResponse.json({ message: 'Failed to fetch books' }, { status: 500 })
+    console.error('[BOOKS_GET]', error);
+    return NextResponse.json({ message: 'Failed to fetch books' }, { status: 500 });
   }
 }
-
 
 // 🔹 POST → Tambah buku baru
 export async function POST(req: NextRequest) {
@@ -127,7 +119,7 @@ export async function POST(req: NextRequest) {
       title,
       author,
       status,
-      genreIds, // array of genre IDs
+      genreIds,
       targetWordCount,
     } = body;
 

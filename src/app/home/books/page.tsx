@@ -93,13 +93,20 @@ export default function Page() {
       params.append('page', page.toString())
       params.append('limit', limit.toString())
 
-      const res = await fetch(`/api/books?${params.toString()}`)
-      if (!res.ok) throw new Error('Gagal mengambil data buku')
-      const data = await res.json()
+      // 🔸 Fetch books
+      const booksRes = await fetch(`/api/books?${params.toString()}`)
+      if (!booksRes.ok) throw new Error('Gagal mengambil data buku')
+      const booksData = await booksRes.json()
 
-      setBooks(data.books ?? [])
-      setStats(data.stats)
-      setTotalPages(data.totalPages ?? 1)
+      // 🔸 Fetch stats dari endpoint terpisah
+      const statsRes = await fetch(`/api/books/stats`)
+      if (!statsRes.ok) throw new Error('Gagal mengambil statistik buku')
+      const statsData = await statsRes.json()
+
+      // 🔸 Set data
+      setBooks(booksData.books ?? [])
+      setStats(statsData ?? null)
+      setTotalPages(booksData.totalPages ?? 1)
       setCurrentPage(page)
     } catch (error) {
       console.error(error)
@@ -301,7 +308,7 @@ export default function Page() {
           <BookOpen size={48} className="text-[var(--brand-accent)] opacity-60 mb-4" />
           <h3 className="text-lg font-medium text-[var(--brand-light)]">Belum ada buku</h3>
           <p className="text-[var(--brand-light)] opacity-80 mt-1">
-            Mulai dengan menambahkan buku pertama Anda
+            Mulai dengan menambahkan buku
           </p>
           <Link href="/home/books/create">
             <button className="mt-4 flex items-center gap-2 bg-[var(--brand-gold)] hover:bg-[var(--brand-goldhover)] text-[var(--brand-darker)] hover:text-[var(--brand-accent)] px-4 py-2 rounded-lg transition-colors">
