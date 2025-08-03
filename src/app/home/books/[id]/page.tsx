@@ -137,7 +137,7 @@ export default function BookDetailPage({ params }: BookDetailProps & { params: P
 
       {/* Informasi Buku */}
       <div className="bg-[var(--brand-darker)] rounded-xl px-15 py-10 space-y-4 border border-[var(--brand-dark)] text-[var(--brand-light)]">
-        <div className="p-6flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <h2 className="font-cinzel text-2xl font-semibold mb-1">{book.title}</h2>
             <p className="italic text-sm opacity-80">by {book.author}</p>
