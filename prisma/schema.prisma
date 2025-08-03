@@ -92,6 +92,8 @@ model Chapter {
   content String
   book    Book   @relation(fields: [bookId], references: [id])
   bookId  Int
+  lastUpdated     DateTime   @updatedAt
+  createdAt       DateTime   @default(now())
 }
 
 
