@@ -1,29 +1,27 @@
 // 📄 src/app/api/books/[id]/chapters/[chapterId]/route.ts
 
-import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { NextRequest, NextResponse } from 'next/server';
 
-// GET endpoint untuk ambil 1 chapter dari sebuah buku
+// 🔹 GET: Ambil satu chapter berdasarkan bookId dan chapterId
 export async function GET(
   req: NextRequest,
-  context: { params: { id: string; chapterId: string } }
+  { params }: { params: { id: string; chapterId: string } }
 ) {
-  const { id, chapterId } = context.params;
-  const bookId = Number(id);
-  const chapId = Number(chapterId);
-
-  if (isNaN(bookId) || isNaN(chapId)) {
-    return NextResponse.json({ error: 'Invalid bookId or chapterId' }, { status: 400 });
-  }
+  const bookId = Number(params.id);
+  const chapterId = Number(params.chapterId);
 
   try {
     const chapter = await prisma.chapter.findFirst({
-      where: { id: chapId, bookId },
+      where: {
+        id: chapterId,
+        bookId: bookId,
+      },
       select: {
         id: true,
         title: true,
         content: true,
-        bookId: true,
+        createdAt: true,
         lastUpdated: true,
       },
     });
@@ -34,40 +32,36 @@ export async function GET(
 
     return NextResponse.json(chapter);
   } catch (error) {
-    console.error('[CHAPTER_GET_ERROR]', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to fetch chapter' }, { status: 500 });
   }
 }
 
-// DELETE → Hapus 1 chapter dari 1 buku
+// 🔹 DELETE: Hapus satu chapter berdasarkan bookId dan chapterId
 export async function DELETE(
   req: NextRequest,
-  context: { params: { id: string; chapterId: string } }
+  { params }: { params: { id: string; chapterId: string } }
 ) {
-  const { id, chapterId } = context.params;
-  const bookId = Number(id);
-  const chapId = Number(chapterId);
-
-  if (isNaN(bookId) || isNaN(chapId)) {
-    return NextResponse.json({ error: 'Invalid ID' }, { status: 400 });
-  }
+  const bookId = Number(params.id);
+  const chapterId = Number(params.chapterId);
 
   try {
-    const chapter = await prisma.chapter.findFirst({
-      where: { id: chapId, bookId },
+    const existing = await prisma.chapter.findFirst({
+      where: {
+        id: chapterId,
+        bookId: bookId,
+      },
     });
 
-    if (!chapter) {
+    if (!existing) {
       return NextResponse.json({ error: 'Chapter not found' }, { status: 404 });
     }
 
     await prisma.chapter.delete({
-      where: { id: chapId },
+      where: { id: chapterId },
     });
 
     return NextResponse.json({ message: 'Chapter deleted successfully' });
   } catch (error) {
-    console.error('[CHAPTER_DELETE_ERROR]', error);
     return NextResponse.json({ error: 'Failed to delete chapter' }, { status: 500 });
   }
 }
