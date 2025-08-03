@@ -1,4 +1,4 @@
-// 📄 src/app/api/books/[bookId]/chapters/route.ts
+// 📄 src/app/api/books/[id]/chapters/route.ts
 
 import { prisma } from '@/lib/prisma'
 import { NextRequest, NextResponse } from 'next/server'
