@@ -4,20 +4,21 @@ import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
 // GET endpoint untuk ambil 1 chapter dari sebuah buku
-export async function GET(req: NextRequest, context: { params: { id: string; chapterId: string } }) {
-  const bookId = Number(context.params.id);
-  const chapterId = Number(context.params.chapterId);
+export async function GET(
+  req: NextRequest,
+  context: { params: { id: string; chapterId: string } }
+) {
+  const { id, chapterId } = context.params;
+  const bookId = Number(id);
+  const chapId = Number(chapterId);
 
-  if (isNaN(bookId) || isNaN(chapterId)) {
+  if (isNaN(bookId) || isNaN(chapId)) {
     return NextResponse.json({ error: 'Invalid bookId or chapterId' }, { status: 400 });
   }
 
   try {
     const chapter = await prisma.chapter.findFirst({
-      where: {
-        id: chapterId,
-        bookId: bookId,
-      },
+      where: { id: chapId, bookId },
       select: {
         id: true,
         title: true,
@@ -39,20 +40,21 @@ export async function GET(req: NextRequest, context: { params: { id: string; cha
 }
 
 // DELETE → Hapus 1 chapter dari 1 buku
-export async function DELETE(req: NextRequest, context: { params: { id: string; chapterId: string } }) {
-  const bookId = Number(context.params.id);
-  const chapterId = Number(context.params.chapterId);
+export async function DELETE(
+  req: NextRequest,
+  context: { params: { id: string; chapterId: string } }
+) {
+  const { id, chapterId } = context.params;
+  const bookId = Number(id);
+  const chapId = Number(chapterId);
 
-  if (isNaN(bookId) || isNaN(chapterId)) {
+  if (isNaN(bookId) || isNaN(chapId)) {
     return NextResponse.json({ error: 'Invalid ID' }, { status: 400 });
   }
 
   try {
     const chapter = await prisma.chapter.findFirst({
-      where: {
-        id: chapterId,
-        bookId: bookId,
-      },
+      where: { id: chapId, bookId },
     });
 
     if (!chapter) {
@@ -60,9 +62,7 @@ export async function DELETE(req: NextRequest, context: { params: { id: string; 
     }
 
     await prisma.chapter.delete({
-      where: {
-        id: chapterId,
-      },
+      where: { id: chapId },
     });
 
     return NextResponse.json({ message: 'Chapter deleted successfully' });
