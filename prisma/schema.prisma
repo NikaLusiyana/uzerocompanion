@@ -70,6 +70,7 @@ model Book {
   progress        Int        @default(0)
   cover           String?
   targetWordCount Int        @default(0)
+  sinopsis        String?
   lastUpdated     DateTime   @updatedAt
   createdAt       DateTime   @default(now())
 

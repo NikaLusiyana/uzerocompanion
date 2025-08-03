@@ -24,6 +24,7 @@ export default function EditBookPage() {
     status: 'Draft',
     progress: 0,
     targetWordCount: '',
+    sinopsis: '',
     cover: ''
   })
 
@@ -54,6 +55,7 @@ export default function EditBookPage() {
           status: data.status || 'Draft',
           progress: data.progress || 0,
           targetWordCount: String(data.targetWordCount || ''),
+          sinopsis: data.sinopsis || '',
           cover: data.cover || ''
         })
 
@@ -192,6 +194,19 @@ export default function EditBookPage() {
             ))}
           </div>
         </div>
+
+        <div className="mb-4">
+          <label className="block mb-1 font-medium">Sinopsis</label>
+          <textarea
+            name="sinopsis"
+            value={form.sinopsis}
+            onChange={(e) =>
+              setForm((prev) => ({ ...prev, sinopsis: e.target.value }))
+            }
+            className="w-full p-2 rounded bg-[var(--background)] text-[var(--brand-light)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-gold)]"
+          />
+        </div>
+
 
         <div className="mb-6">
           <label className="block mb-1 font-medium">URL Sampul (opsional)</label>

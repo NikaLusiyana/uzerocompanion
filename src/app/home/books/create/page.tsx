@@ -25,6 +25,7 @@ export default function Page() {
     author: '',
     status: 'Draft',
     targetWordCount: '',
+    sinopsis: '',
     cover: ''
   })
 
@@ -56,7 +57,7 @@ export default function Page() {
   }, [])
 
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setForm(prev => ({
       ...prev,
@@ -132,7 +133,7 @@ export default function Page() {
             value={form.title}
             onChange={handleChange}
             required
-            className="w-full p-2 rounded bg-[var(--background)] text-[var(--brand-light)]"
+            className="w-full p-2 rounded bg-[var(--background)] text-[var(--brand-light)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-gold)]"
           />
         </div>
 
@@ -143,7 +144,7 @@ export default function Page() {
             value={form.author}
             onChange={handleChange}
             required
-            className="w-full p-2 rounded bg-[var(--background)] text-[var(--brand-light)]"
+            className="w-full p-2 rounded bg-[var(--background)] text-[var(--brand-light)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-gold)]"
           />
         </div>
 
@@ -153,7 +154,7 @@ export default function Page() {
             name="status"
             value={form.status}
             onChange={handleChange}
-            className="w-full p-2 rounded bg-[var(--background)] text-[var(--brand-light)]"
+            className="w-full p-2 rounded bg-[var(--background)] text-[var(--brand-light)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-gold)]"
           >
             <option value="Draft">Draft</option>
             <option value="Published">Published</option>
@@ -167,7 +168,7 @@ export default function Page() {
             type="number"
             value={form.targetWordCount}
             onChange={handleChange}
-            className="w-full p-2 rounded bg-[var(--background)] text-[var(--brand-light)]"
+            className="w-full p-2 rounded bg-[var(--background)] text-[var(--brand-light)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-gold)]"
           />
         </div>
 
@@ -192,6 +193,16 @@ export default function Page() {
           </div>
         </div>
 
+        <div className="mb-4">
+          <label className="block mb-1 font-medium">Sinopsis</label>
+          <textarea
+            name="sinopsis"
+            value={form.sinopsis}
+            onChange={handleChange}
+            className="w-full p-2 rounded bg-[var(--background)] text-[var(--brand-light)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-gold)]"
+          />
+        </div>
+
 
         <div className="mb-6">
           <label className="block mb-1 font-medium">URL Sampul (opsional)</label>
@@ -199,7 +210,7 @@ export default function Page() {
             name="cover"
             value={form.cover}
             onChange={handleChange}
-            className="w-full p-2 rounded bg-[var(--background)] text-[var(--brand-light)]"
+            className="w-full p-2 rounded bg-[var(--background)] text-[var(--brand-light)] focus:outline-none focus:ring-2 focus:ring-[var(--brand-gold)]"
           />
         </div>
 
