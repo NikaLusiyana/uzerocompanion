@@ -1,18 +1,12 @@
+// 📄 src/app/api/books/[id]/chapters/[chapterId]/route.ts
+
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
-// Definisi parameter
-type Params = {
-  params: {
-    id: string;
-    chapterId: string;
-  };
-};
-
 // GET endpoint untuk ambil 1 chapter dari sebuah buku
-export async function GET(req: NextRequest, { params }: Params) {
-  const bookId = Number(params.id);
-  const chapterId = Number(params.chapterId);
+export async function GET(req: NextRequest, context: { params: { id: string; chapterId: string } }) {
+  const bookId = Number(context.params.id);
+  const chapterId = Number(context.params.chapterId);
 
   if (isNaN(bookId) || isNaN(chapterId)) {
     return NextResponse.json({ error: 'Invalid bookId or chapterId' }, { status: 400 });
@@ -45,9 +39,9 @@ export async function GET(req: NextRequest, { params }: Params) {
 }
 
 // DELETE → Hapus 1 chapter dari 1 buku
-export async function DELETE(req: NextRequest, { params }: Params) {
-  const bookId = Number(params.id);
-  const chapterId = Number(params.chapterId);
+export async function DELETE(req: NextRequest, context: { params: { id: string; chapterId: string } }) {
+  const bookId = Number(context.params.id);
+  const chapterId = Number(context.params.chapterId);
 
   if (isNaN(bookId) || isNaN(chapterId)) {
     return NextResponse.json({ error: 'Invalid ID' }, { status: 400 });
